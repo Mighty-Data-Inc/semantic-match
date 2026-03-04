@@ -1,38 +1,36 @@
-# json-surgery
+# semantic-match
 
-Iterative, AI-guided JSON modification powered by OpenAI. Pass in any JSON-compatible object and natural-language instructions; the package breaks the task into discrete atomic operations (assign, delete, append, insert, rename) that are verified and applied one by one until the object satisfies your instructions.
+AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list — even when names differ — and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
 
 This repo contains cross-language implementations from **Mighty Data Inc.** that can be dropped straight into real projects.
 
 ## Design goals
 
-* Minimal abstractions
-* Predictable behavior
-* Cross-language parity (Python + TypeScript)
-* Easy to drop into real projects
+- Minimal abstractions
+- Predictable behavior
+- Cross-language parity (Python + TypeScript)
+- Easy to drop into real projects
 
-Rather than asking an LLM to rewrite an entire JSON blob in one shot (which is error-prone for large or complex structures), `json_surgery` / `jsonSurgery` decomposes the task into small, verifiable steps, gives the model feedback after each one, and iterates until validation passes.
+Rather than relying purely on exact string matching, `find_semantic_match` / `findSemanticMatch` first checks for an exact name match (case-insensitive, no API call), then falls back to an LLM to resolve conceptual equivalence — for example, recognising that "Client Identifier" and "Customer ID" refer to the same thing.
 
 ## Packages
 
-- TypeScript: `@mightydatainc/json-surgery` (npm) in `packages/typescript-json-surgery`
-- Python: `mightydatainc-json-surgery` (PyPI, import as `mightydatainc_json_surgery`) in `packages/python-json-surgery`
+- TypeScript: `@mightydatainc/semantic-match` (npm) in `packages/typescript-semantic-match`
+- Python: `mightydatainc-semantic-match` (PyPI, import as `mightydatainc_semantic_match`) in `packages/python-semantic-match`
 
 Package-specific docs:
 
-- TypeScript: [packages/typescript-json-surgery/README.md](packages/typescript-json-surgery/README.md)
-- Python: [packages/python-json-surgery/README.md](packages/python-json-surgery/README.md)
+- TypeScript: [packages/typescript-semantic-match/README.md](packages/typescript-semantic-match/README.md)
+- Python: [packages/python-semantic-match/README.md](packages/python-semantic-match/README.md)
 
 ## Feature overview
 
 Core capabilities (Python + TypeScript):
 
-- `json_surgery` / `jsonSurgery` — iteratively modifies a JSON object via LLM-guided atomic operations
-- `placemarked_json_stringify` / `placemarkedJSONStringify` — serializes JSON with inline path comments for model readability
-- `navigate_to_json_path` / `navigateToJSONPath` — traverses a JSON object by a path list
-- Validation callback (`on_validate_before_return` / `onValidateBeforeReturn`) for custom schema enforcement
-- Progress callback (`on_work_in_progress` / `onWorkInProgress`) for monitoring and mid-process intervention
-- Configurable time and iteration limits with `JSONSurgeryError` carrying the last known object state
+- `find_semantic_match` / `findSemanticMatch` — finds the best semantic match for a query string within a list, returning its index or `-1`
+- `compare_item_lists` / `compareItemLists` — diffs two versions of a list and classifies each item as `unchanged`, `renamed`, `removed`, or `added`
+- `SemanticItem` — accepted item type: a plain string or a `{ name, description? }` object
+- Optional `explanation` parameter on both functions for extra model context
 
 ## Quick start
 
@@ -40,56 +38,72 @@ Core capabilities (Python + TypeScript):
 
 ```python
 from openai import OpenAI
-from mightydatainc_json_surgery import json_surgery
+from mightydatainc_semantic_match import find_semantic_match, compare_item_lists
 
 client = OpenAI()
 
-result = json_surgery(
-    openai_client=client,
-    obj={"title": "Draft", "items": [{"id": 1, "status": "draft"}]},
-    modification_instructions='Set the status of every item to "published".',
+items = ["Customer ID", "Order Date", "Total Amount"]
+
+index = find_semantic_match(client, items, "Client Identifier")
+print(index)   # 0
+
+results = compare_item_lists(
+    client,
+    ["Customer ID", "Order Date", "Unit Price"],
+    ["Client ID",   "Order Date"],
 )
-print(result)
+for entry in results:
+    print(entry["classification"], entry["item"], entry.get("new_name") or "")
 ```
 
 ### TypeScript
 
 ```ts
-import OpenAI from 'openai';
-import { jsonSurgery } from '@mightydatainc/json-surgery';
+import OpenAI from "openai";
+import {
+  findSemanticMatch,
+  compareItemLists,
+} from "@mightydatainc/semantic-match";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const result = await jsonSurgery(
+const items = ["Customer ID", "Order Date", "Total Amount"];
+
+const index = await findSemanticMatch(client, items, "Client Identifier");
+console.log(index); // 0
+
+const results = await compareItemLists(
   client,
-  { title: 'Draft', items: [{ id: 1, status: 'draft' }] },
-  'Set the status of every item to "published".'
+  ["Customer ID", "Order Date", "Unit Price"],
+  ["Client ID", "Order Date"],
 );
-console.log(result);
+for (const entry of results) {
+  console.log(entry.classification, entry.item, entry.newName ?? "");
+}
 ```
 
 ## Local dev (Windows)
 
 ### Python
 
-From `packages/python-json-surgery`, activate the package venv and run tests:
+From `packages/python-semantic-match`, activate the package venv and run tests:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 python -m pytest tests/ -v
 ```
 
-Live integration tests (real API) require `OPENAI_API_KEY` in your environment.
-
 ### TypeScript
 
-From `packages/typescript-json-surgery`, install dependencies and run tests/build:
+From `packages/typescript-semantic-match`:
 
 ```powershell
 npm ci
 npm test
 npm run build
 ```
+
+Live integration tests (real API) require `OPENAI_API_KEY` in your environment.
 
 ## Unit testing with live API calls
 
@@ -103,22 +117,21 @@ These tests do have tradeoffs:
 - They incur a small API cost when run.
 - They can be slower than pure unit tests.
 
-Deterministic assertions are still intentional here: tests are written with tightly scoped instructions and clearly defined JSON outcomes, so stable structured output is treated as a baseline requirement. If those tests fail, we treat it as a bug in prompt design, output handling, or integration behavior.
+Deterministic assertions are still intentional here: tests are written with tightly scoped inputs and clearly defined expected outcomes, so stable structured output is treated as a baseline requirement. If those tests fail, we treat it as a bug in prompt design, output handling, or integration behavior.
 
 ## Release process
 
 This repo ships two public packages with aligned versions:
 
-- npm: `@mightydatainc/json-surgery` from `packages/typescript-json-surgery`
-- PyPI: `mightydatainc-json-surgery` from `packages/python-json-surgery`
+- npm: `@mightydatainc/semantic-match` from `packages/typescript-semantic-match`
+- PyPI: `mightydatainc-semantic-match` from `packages/python-semantic-match`
 
-GitHub release automation publishes each package automatically on push to `main`
-when its package version changes:
+GitHub release automation publishes each package automatically on push to `main` when its package version changes:
 
-- TypeScript checks `packages/typescript-json-surgery/package.json`
-- Python checks `packages/python-json-surgery/pyproject.toml`
+- TypeScript checks `packages/typescript-semantic-match/package.json`
+- Python checks `packages/python-semantic-match/pyproject.toml`
 
-Before publishing, ensure both versions are updated (`package.json` and `pyproject.toml`), then authenticate once locally:
+Before publishing, ensure both versions are updated, then authenticate once locally:
 
 - npm: `npm login`
 - PyPI: configure `~/.pypirc` or use `python -m twine upload --repository pypi dist/*`
@@ -126,6 +139,6 @@ Before publishing, ensure both versions are updated (`package.json` and `pyproje
 After publish, tag and push a release tag (example):
 
 ```powershell
-git tag v1.1.1
-git push origin v1.1.1
+git tag v1.1.0
+git push origin v1.1.0
 ```

@@ -1,7 +1,7 @@
 {
   "name": "@mightydatainc/semantic-match",
-  "version": "1.0.1",
-  "description": "An easy-to-call function that invokes iterative, AI-guided edits to a JSON-compatible object",
+  "version": "1.1.0",
+  "description": "AI-powered semantic matching and comparison of named item lists, powered by OpenAI",
   "author": "Mikhail Voloshin",
   "license": "MIT",
   "repository": {

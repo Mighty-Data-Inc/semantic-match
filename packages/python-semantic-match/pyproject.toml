@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mightydatainc-semantic-match"
-version = "1.0.0"
-description = "An easy-to-call function that invokes iterative, AI-guided edits to a JSON-compatible object"
+version = "1.1.0"
+description = "AI-powered semantic matching and comparison of named item lists, powered by OpenAI"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -17,7 +17,7 @@ authors = [{ name = "Mikhail Voloshin" }]
 license = { file = "LICENSE" }
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mightydatainc_json_surgery"]
+packages = ["src/mightydatainc_semantic_match"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
