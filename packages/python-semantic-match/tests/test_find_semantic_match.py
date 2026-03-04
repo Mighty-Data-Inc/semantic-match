@@ -13,7 +13,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 
-from mdi_llmkit.semantic_match import SemanticItem, find_semantic_match
+from mightydatainc_semantic_match import SemanticItem, find_semantic_match
 
 
 print(f"Loading .env from CWD={os.getcwd()}")
