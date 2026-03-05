@@ -2,6 +2,12 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.1.1] - 2026-03-04
+
+### Fixed
+
+- Re-wrote `README.md` using `create_file` to ensure valid UTF-8 encoding (previous write via PowerShell heredoc produced Windows-1252, breaking the package build).
+
 ## [1.1.0] - 2026-03-04
 
 ### Fixed

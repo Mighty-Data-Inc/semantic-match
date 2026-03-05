@@ -1,6 +1,6 @@
 # @mightydatainc/semantic-match
 
-AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list — even when names differ — and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
+AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list -- even when names differ -- and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
 
 ## Installation
 

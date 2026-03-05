@@ -1,6 +1,6 @@
 {
   "name": "@mightydatainc/semantic-match",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "AI-powered semantic matching and comparison of named item lists, powered by OpenAI",
   "author": "Mikhail Voloshin",
   "license": "MIT",

@@ -1,6 +1,6 @@
 # semantic-match
 
-AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list — even when names differ — and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
+AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list -- even when names differ -- and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
 
 This repo contains cross-language implementations from **Mighty Data Inc.** that can be dropped straight into real projects.
 
@@ -11,7 +11,7 @@ This repo contains cross-language implementations from **Mighty Data Inc.** that
 - Cross-language parity (Python + TypeScript)
 - Easy to drop into real projects
 
-Rather than relying purely on exact string matching, `find_semantic_match` / `findSemanticMatch` first checks for an exact name match (case-insensitive, no API call), then falls back to an LLM to resolve conceptual equivalence — for example, recognising that "Client Identifier" and "Customer ID" refer to the same thing.
+Rather than relying purely on exact string matching, `find_semantic_match` / `findSemanticMatch` first checks for an exact name match (case-insensitive, no API call), then falls back to an LLM to resolve conceptual equivalence -- for example, recognising that "Client Identifier" and "Customer ID" refer to the same thing.
 
 ## Packages
 
@@ -27,9 +27,9 @@ Package-specific docs:
 
 Core capabilities (Python + TypeScript):
 
-- `find_semantic_match` / `findSemanticMatch` — finds the best semantic match for a query string within a list, returning its index or `-1`
-- `compare_item_lists` / `compareItemLists` — diffs two versions of a list and classifies each item as `unchanged`, `renamed`, `removed`, or `added`
-- `SemanticItem` — accepted item type: a plain string or a `{ name, description? }` object
+- `find_semantic_match` / `findSemanticMatch` -- finds the best semantic match for a query string within a list, returning its index or `-1`
+- `compare_item_lists` / `compareItemLists` -- diffs two versions of a list and classifies each item as `unchanged`, `renamed`, `removed`, or `added`
+- `SemanticItem` -- accepted item type: a plain string or a `{ name, description? }` object
 - Optional `explanation` parameter on both functions for extra model context
 
 ## Quick start
@@ -139,6 +139,6 @@ Before publishing, ensure both versions are updated, then authenticate once loca
 After publish, tag and push a release tag (example):
 
 ```powershell
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.1.1
+git push origin v1.1.1
 ```

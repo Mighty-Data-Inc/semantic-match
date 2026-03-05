@@ -1,6 +1,6 @@
 # mightydatainc-semantic-match
 
-AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list — even when names differ — and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
+AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list -- even when names differ -- and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
 
 ## Installation
 
@@ -23,10 +23,10 @@ client = OpenAI()
 items = ["Customer ID", "Order Date", "Total Amount"]
 
 index = find_semantic_match(client, items, "Client Identifier")
-print(index)          # 0  ?  "Customer ID"
+print(index)          # 0  ->  "Customer ID"
 
 index = find_semantic_match(client, items, "Product Name")
-print(index)          # -1  ?  no match found
+print(index)          # -1  ->  no match found
 ```
 
 Items can also carry an optional `description` to give the model more context:
@@ -41,7 +41,7 @@ items: list[ComparableNamedItem] = [
 ]
 
 index = find_semantic_match(client, items, "monthly subscription revenue")
-print(index)          # 0  ?  "MRR"
+print(index)          # 0  ->  "MRR"
 ```
 
 An optional `explanation` string can be passed to give the model additional context:
@@ -95,7 +95,7 @@ SemanticItem = str | ComparableNamedItem
 # ComparableNamedItem shape:
 # {
 #     "name": str,          # required
-#     "description": str,   # optional — extra context for the model
+#     "description": str,   # optional -- extra context for the model
 # }
 ```
 
