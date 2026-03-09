@@ -60,7 +60,7 @@ export const findSemanticMatch = async (
     }
   }
 
-  const convo = new GptConversation([], { openaiClient });
+  const convo = new GptConversation(openaiClient);
   convo.addSystemMessage(`
 You are a data analyst who has been hired to try to preserve the integrity of a list of
 data items. The user will show you a list of items from a data migration, followed by 
