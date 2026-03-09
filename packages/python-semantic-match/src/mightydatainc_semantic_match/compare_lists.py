@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import NotRequired, TypedDict
+from typing import NotRequired, Sequence, TypedDict
 
 from mightydatainc_gpt_conversation import OpenAIClientLike
 
@@ -30,18 +30,18 @@ class ItemComparisonResult(TypedDict):
 
 def compare_item_lists(
     openai_client: OpenAIClientLike,
-    list_before: list[SemanticItem],
-    list_after: list[SemanticItem],
+    list_before: Sequence[SemanticItem],
+    list_after: Sequence[SemanticItem],
     explanation: str | None = None,
 ) -> list[ItemComparisonResult]:
     """Compare list versions and classify items as removed/renamed/unchanged/added."""
-    list_after = list(list_after)
+    unmatched_after = list(list_after)
     result: list[ItemComparisonResult] = []
 
     for item_before in list_before:
         index_matched_in_after = find_semantic_match(
             openai_client,
-            list_after,
+            unmatched_after,
             item_before,
             explanation,
         )
@@ -56,7 +56,7 @@ def compare_item_lists(
             )
             continue
 
-        item_after = list_after[index_matched_in_after]
+        item_after = unmatched_after[index_matched_in_after]
         if are_items_equal(item_before, item_after):
             result.append(
                 {
@@ -74,9 +74,9 @@ def compare_item_lists(
                 }
             )
 
-        del list_after[index_matched_in_after]
+        del unmatched_after[index_matched_in_after]
 
-    for item_after in list_after:
+    for item_after in unmatched_after:
         result.append(
             {
                 "item": item_after,

@@ -10,6 +10,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from mightydatainc_semantic_match import (
+    SemanticItem,
     are_items_equal,
     compare_items,
     get_item_description,
@@ -182,7 +183,7 @@ class SemanticItemHelpersTests(unittest.TestCase):
     def test_remove_item_from_list_removes_objects_when_name_and_description_equivalent(
         self,
     ):
-        original = [
+        original: list[SemanticItem] = [
             {"name": "Catalog Item", "description": "legacy details"},
             {"name": "Catalog Item", "description": "LEGACY DETAILS"},
             {"name": "Other Item"},
@@ -227,7 +228,7 @@ class SemanticItemHelpersTests(unittest.TestCase):
     def test_remove_item_from_list_does_not_remove_name_only_matches_if_descriptions_differ(
         self,
     ):
-        original = [
+        original: list[SemanticItem] = [
             {"name": "Catalog Item", "description": "first copy"},
             {"name": "catalog item", "description": "second copy"},
             {"name": "Other Item"},

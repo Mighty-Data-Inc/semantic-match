@@ -15,7 +15,7 @@ This module focuses on item-level behavior:
 from __future__ import annotations
 
 import json
-from typing import NotRequired, TypeAlias, TypedDict
+from typing import NotRequired, Sequence, TypeAlias, TypedDict
 
 
 class ComparableNamedItem(TypedDict):
@@ -103,7 +103,7 @@ def are_items_equal(a: SemanticItem, b: SemanticItem) -> bool:
 
 
 def remove_item_from_list(
-    item_list: list[SemanticItem],
+    item_list: Sequence[SemanticItem],
     item_to_remove: SemanticItem,
 ) -> list[SemanticItem]:
     """Return a new list with all equivalent items removed."""

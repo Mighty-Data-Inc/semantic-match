@@ -1,18 +1,101 @@
 # mightydatainc-semantic-match
 
-AI-powered semantic matching and comparison of named item lists, powered by OpenAI. Resolve a user-supplied string to a canonical item in a list -- even when names differ -- and diff two versions of a list to classify each item as unchanged, renamed, removed, or added.
+This package is a "same thing, different words" detector for list names.
 
-## Installation
+Imagine you have two spreadsheets.
 
-```bash
-pip install mightydatainc-semantic-match
+- Old sheet says: "Customer ID"
+- New sheet says: "Client Identifier"
+
+A normal string match says those are different.
+This package helps you recognize they likely mean the same concept.
+
+It helps answer a common migration question:
+
+"Do these two labels refer to the same thing, even if they are worded differently?"
+
+Use it for lists of names, such as:
+
+- column names
+- metric names
+- category names
+- status names
+
+Think of it this way:
+
+- Exact text match asks: "Are these letters identical?"
+- This package asks: "Do these labels mean the same thing?"
+
+That makes it easier to distinguish additions/removals from things that simply got renamed.
+
+## Purpose and intent
+
+Use this package when you need to compare two versions of a list and understand what changed in human terms:
+
+- unchanged (same meaning)
+- renamed (same concept, different label)
+- removed
+- added
+
+It is especially useful during schema evolution, dashboard refactors, and terminology cleanup.
+
+## Find one matching item in a list: `find_semantic_match`
+
+Use `find_semantic_match` when you have one item and want to know whether it already exists in a canonical list.
+
+```python
+from openai import OpenAI
+from mightydatainc_semantic_match import find_semantic_match
+
+client = OpenAI()
+items = ["Customer ID", "Order Date", "Total Amount"]
+
+# "Client Identifier" means the same thing as "Customer ID"
+index = find_semantic_match(client, items, "Client Identifier")
+print(index)  # 0
+
+# No close semantic equivalent in the list
+index = find_semantic_match(client, items, "Product Name")
+print(index)  # -1
 ```
 
-## Quick Start
+Why this is useful:
 
-### `find_semantic_match`
+- lets you map incoming labels to canonical names
+- avoids duplicate concepts caused by wording differences
+- returns `-1` when no strong match is found
 
-Find which item in a list best matches a query string, even if the names are different:
+## Compare two lists for unchanged/removed/added/renamed: `compare_item_lists`
+
+Use `compare_item_lists` when you want a migration-style diff with semantic awareness.
+
+```python
+from openai import OpenAI
+from mightydatainc_semantic_match import compare_item_lists
+
+client = OpenAI()
+
+before = ["Customer ID", "Order Date", "Unit Price", "Total Amount"]
+after = ["Client ID", "Order Date", "Grand Total"]
+
+results = compare_item_lists(client, before, after)
+for row in results:
+    print(row["classification"], row["item"], row.get("new_name"))
+```
+
+Why this is useful:
+
+- you get a practical change log, not just string-level differences
+- renamed vs removed+added is handled more intelligently
+- output is straightforward to feed into migration or reporting logic
+
+## Optional details: use `name` and `description` instead of just strings
+
+Plain strings work well when names are clear.
+
+Use objects with `name` + optional `description` when names are ambiguous or overloaded. The description gives the matcher extra context so it can choose the right meaning.
+
+Example:
 
 ```python
 from openai import OpenAI
@@ -20,96 +103,36 @@ from mightydatainc_semantic_match import find_semantic_match
 
 client = OpenAI()
 
-items = ["Customer ID", "Order Date", "Total Amount"]
-
-index = find_semantic_match(client, items, "Client Identifier")
-print(index)          # 0  ->  "Customer ID"
-
-index = find_semantic_match(client, items, "Product Name")
-print(index)          # -1  ->  no match found
-```
-
-Items can also carry an optional `description` to give the model more context:
-
-```python
-from mightydatainc_semantic_match import find_semantic_match, ComparableNamedItem
-
-items: list[ComparableNamedItem] = [
-    {"name": "MRR", "description": "Monthly Recurring Revenue"},
-    {"name": "ARR", "description": "Annual Recurring Revenue"},
-    {"name": "Churn Rate"},
+items = [
+    {
+        "name": "Georgia",
+        "description": "Country in the South Caucasus. Capital: Tbilisi.",
+    },
+    {
+        "name": "Georgia",
+        "description": "U.S. state in the Southeast. Capital: Atlanta.",
+    },
 ]
 
-index = find_semantic_match(client, items, "monthly subscription revenue")
-print(index)          # 0  ->  "MRR"
+query = {
+    "name": "Georgia",
+    "description": "State in the southeastern United States",
+}
+
+index = find_semantic_match(client, items, query)
+print(index)  # 1
 ```
 
-An optional `explanation` string can be passed to give the model additional context:
+Without descriptions, both entries look identical by name alone.
+
+## Installation and usage
+
+```bash
+pip install mightydatainc-semantic-match
+```
 
 ```python
-index = find_semantic_match(
-    client,
-    items,
-    "monthly subscription revenue",
-    explanation="These are SaaS business metrics.",
-)
+import mightydatainc_semantic_match
 ```
 
-Exact name matches (case-insensitive) are resolved locally without an API call.
-
-### `compare_item_lists`
-
-Diff two versions of an item list and classify every item:
-
-```python
-from mightydatainc_semantic_match import compare_item_lists, ItemComparisonClassification
-
-before = ["Customer ID", "Order Date", "Unit Price", "Total Amount"]
-after  = ["Client ID",   "Order Date", "Grand Total"]
-
-results = compare_item_lists(client, before, after)
-
-for entry in results:
-    print(entry["classification"], "->", entry["item"], entry.get("new_name") or "")
-# renamed    -> Customer ID   Client ID
-# unchanged  -> Order Date
-# removed    -> Unit Price
-# added      -> Grand Total
-```
-
-Each result record is an `ItemComparisonResult` TypedDict:
-
-| Field | Type | Description |
-|---|---|---|
-| `item` | `SemanticItem` | The original item (or the new item for `added`). |
-| `classification` | `ItemComparisonClassification` | One of `unchanged`, `renamed`, `removed`, `added`. |
-| `new_name` | `str \| None` | Populated only for `renamed` items. |
-
-## `SemanticItem`
-
-Both functions accept items as plain strings or as `ComparableNamedItem` dicts:
-
-```python
-SemanticItem = str | ComparableNamedItem
-
-# ComparableNamedItem shape:
-# {
-#     "name": str,          # required
-#     "description": str,   # optional -- extra context for the model
-# }
-```
-
-## Local dev (Windows)
-
-From `packages/python-semantic-match`, activate the package venv and run tests:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-python -m pytest tests/ -v
-```
-
-## Notes
-
-- Package name for `pip install` is `mightydatainc-semantic-match`.
-- Python import package is `mightydatainc_semantic_match`.
-- Requires Python 3.13+ and `mightydatainc-gpt-conversation>=1.3.2`.
+Requires Python 3.13+
