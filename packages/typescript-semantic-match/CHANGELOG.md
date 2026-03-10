@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.2.0] - 2026-03-09
+
+### Changed
+
+- Updated dependencies.
+- Updated README documentation and examples.
+
 ## [1.1.2] - 2026-03-04
 
 ### Chore
