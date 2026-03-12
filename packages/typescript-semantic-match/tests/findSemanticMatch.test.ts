@@ -61,7 +61,7 @@ const expectOneOfMatches = async (
 };
 
 describe('findSemanticMatch (live API)', () => {
-  // IMPORTANT: These tests intentionally use live OpenAI calls and DO NOT mock GptConversation.
+  // IMPORTANT: These tests intentionally use live OpenAI calls and DO NOT mock LLMConversation.
   // We are validating real prompt+schema behavior end-to-end.
 
   describe('exact-match short-circuit behavior', () => {

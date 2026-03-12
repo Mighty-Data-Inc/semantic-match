@@ -37,7 +37,7 @@ def create_intentionally_invalid_client(suffix: str) -> OpenAI:
 
 
 class FindSemanticMatchLiveAPITests(unittest.TestCase):
-    # IMPORTANT: These tests intentionally use live OpenAI calls and DO NOT mock GptConversation.
+    # IMPORTANT: These tests intentionally use live OpenAI calls and DO NOT mock LLMConversation.
     # We are validating real prompt+schema behavior end-to-end.
 
     def expect_match(

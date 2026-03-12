@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import NotRequired, Sequence, TypedDict
-
-from mightydatainc_gpt_conversation import OpenAIClientLike
+from typing import Any, NotRequired, Sequence, TypedDict
 
 from .find_semantic_match import find_semantic_match
 from .semantic_item import SemanticItem, are_items_equal, get_item_name
@@ -29,7 +27,7 @@ class ItemComparisonResult(TypedDict):
 
 
 def compare_item_lists(
-    openai_client: OpenAIClientLike,
+    ai_client: Any,
     list_before: Sequence[SemanticItem],
     list_after: Sequence[SemanticItem],
     explanation: str | None = None,
@@ -40,7 +38,7 @@ def compare_item_lists(
 
     for item_before in list_before:
         index_matched_in_after = find_semantic_match(
-            openai_client,
+            ai_client,
             unmatched_after,
             item_before,
             explanation,

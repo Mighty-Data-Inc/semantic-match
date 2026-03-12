@@ -14,16 +14,15 @@
  * is found, or `-1` when no sufficiently similar item exists.
  */
 
-import { OpenAI } from 'openai';
 import {
   areItemsEqual,
   itemToPromptString,
   SemanticItem,
 } from './semanticItem.js';
 import {
-  GptConversation,
+  LLMConversation,
   JSONSchemaFormat,
-} from '@mightydatainc/gpt-conversation';
+} from '@mightydatainc/llm-conversation';
 
 /**
  * Finds the best semantic match for a test item within a list of items.
@@ -37,7 +36,7 @@ import {
  * in the list under a different name and returns the index of the first matching list item,
  * or `-1` when no good semantic match is found.
  *
- * @param openaiClient An instance of the OpenAI client to use for LLM interactions.
+ * @param aiClient An instance of the AI client to use for LLM interactions.
  * @param itemlist The list of strings/items to compare.
  * @param itemToFind The item for which we want to find a semantic match in the list.
  * @param explanation Optional explanation that provides context for the comparison, e.g.
@@ -46,7 +45,7 @@ import {
  * is found.
  */
 export const findSemanticMatch = async (
-  openaiClient: OpenAI,
+  aiClient: any,
   itemlist: SemanticItem[],
   itemToFind: SemanticItem,
   explanation?: string
@@ -60,7 +59,7 @@ export const findSemanticMatch = async (
     }
   }
 
-  const convo = new GptConversation(openaiClient);
+  const convo = new LLMConversation(aiClient);
   convo.addSystemMessage(`
 You are a data analyst who has been hired to try to preserve the integrity of a list of
 data items. The user will show you a list of items from a data migration, followed by 

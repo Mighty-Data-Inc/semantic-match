@@ -12,7 +12,6 @@
  * names may change while meaning stays the same.
  */
 
-import { OpenAI } from 'openai';
 import { areItemsEqual, getItemName, SemanticItem } from './semanticItem.js';
 import { findSemanticMatch } from './findSemanticMatch.js';
 
@@ -43,16 +42,19 @@ export type ItemComparisonResult = {
  * renamed, or unchanged based on whether it has a semantic match in the "after" list.
  * Any items in the "after" list that don't match to an item in the "before" list are
  * classified as added.
- * @param before - The list of items before the changes.
- * @param after - The list of items after the changes.
+ *
+ * @param aiClient An instance of the AI client to use for LLM interactions.
+ * @param listBefore The list of items representing the "before" state.
+ * @param listAfter The list of items representing the "after" state.
  * @param explanation Optional explanation that provides context for the comparison, e.g.
  * a description of the items or the nature of the changes.
+ *
  * @returns An array of item comparison results. This includes all items from the "before"
  * list with their classification (removed/renamed/unchanged), and any unmatched items from
  * the "after" list classified as added.
  */
 export const compareItemLists = async (
-  openaiClient: OpenAI,
+  aiClient: any,
   listBefore: SemanticItem[],
   listAfter: SemanticItem[],
   explanation?: string
@@ -65,7 +67,7 @@ export const compareItemLists = async (
 
   for (const itemBefore of listBefore) {
     const indexMatchedInAfter = await findSemanticMatch(
-      openaiClient,
+      aiClient,
       listAfter,
       itemBefore,
       explanation

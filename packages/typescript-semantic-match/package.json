@@ -1,7 +1,7 @@
 {
   "name": "@mightydatainc/semantic-match",
   "version": "1.2.0",
-  "description": "AI-powered semantic matching and comparison of named item lists, powered by OpenAI",
+  "description": "AI-powered semantic matching and comparison of named item lists",
   "author": "Mikhail Voloshin",
   "license": "MIT",
   "repository": {
@@ -28,17 +28,15 @@
   },
   "keywords": [
     "llm",
-    "openai",
-    "responses-api",
     "structured-outputs",
     "chat"
   ],
   "dependencies": {
-    "dotenv": "^17.3.1",
-    "openai": "^6.2.0",
-    "@mightydatainc/gpt-conversation": "^2.0.0"
+    "@mightydatainc/llm-conversation": "^1.0.5"
   },
   "devDependencies": {
+    "dotenv": "^17.3.1",
+    "openai": "^6.2.0",
     "@types/node": "^22.18.10",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

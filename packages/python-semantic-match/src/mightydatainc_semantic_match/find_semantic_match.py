@@ -4,11 +4,10 @@ This module provides a helper that determines whether a test item is already
 present in an existing list, even when names are different.
 """
 
-from typing import Sequence
+from typing import Any, Sequence
 
-from mightydatainc_gpt_conversation import (
-    OpenAIClientLike,
-    GptConversation,
+from mightydatainc_llm_conversation import (
+    LLMConversation,
     JSONSchemaFormat,
 )
 
@@ -16,7 +15,7 @@ from .semantic_item import SemanticItem, are_items_equal, item_to_prompt_string
 
 
 def find_semantic_match(
-    openai_client: OpenAIClientLike,
+    ai_client: Any,
     item_list: Sequence[SemanticItem],
     item_to_find: SemanticItem,
     explanation: str | None = None,
@@ -30,7 +29,7 @@ def find_semantic_match(
         if are_items_equal(item, item_to_find):
             return index
 
-    convo = GptConversation(openai_client)
+    convo = LLMConversation(ai_client)
     convo.add_system_message(
         """
 You are a data analyst who has been hired to try to preserve the integrity of a list of
