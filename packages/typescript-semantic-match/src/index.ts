@@ -1,7 +1,4 @@
-export { SemanticItem } from './semanticItem.js';
-export { findSemanticMatch } from './findSemanticMatch.js';
-export {
-  compareItemLists,
-  ItemComparisonClassification,
-  ItemComparisonResult,
-} from './compareLists.js';
+export * from './semanticItem.js';
+export * from './findSemanticMatch.js';
+export * from './dedupe.js';
+export * from './compareLists.js';
