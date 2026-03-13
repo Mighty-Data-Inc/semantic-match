@@ -168,3 +168,14 @@ Discuss, and then respond with a conclusion.
             groups.append([item])
 
     return groups
+
+
+def remove_semantic_duplicates(
+    ai_client: Any,
+    item_list: Sequence[SemanticItem],
+    explanation: str | None = None,
+) -> list[SemanticItem]:
+    """Remove semantic duplicates by keeping one representative item per group."""
+    groups = get_semantically_distinct_groups(ai_client, item_list, explanation)
+    retval = [group[0] for group in groups]
+    return retval

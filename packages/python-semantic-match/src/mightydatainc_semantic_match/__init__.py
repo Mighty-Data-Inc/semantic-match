@@ -14,7 +14,7 @@ from .compare_lists import (
     ItemComparisonResult,
     compare_item_lists,
 )
-from .dedupe import get_semantically_distinct_groups
+from .dedupe import get_semantically_distinct_groups, remove_semantic_duplicates
 
 __all__ = [
     "ComparableNamedItem",
@@ -30,4 +30,5 @@ __all__ = [
     "ItemComparisonResult",
     "compare_item_lists",
     "get_semantically_distinct_groups",
+    "remove_semantic_duplicates",
 ]

@@ -183,3 +183,32 @@ Discuss, and then respond with a conclusion.
 
   return groups;
 };
+
+/**
+ * Removes semantic duplicates from a list by keeping one representative item
+ * from each semantic-equivalence group.
+ *
+ * This function first groups items using `getSemanticallyDistinctGroups`, then
+ * returns the first item from each group as the deduplicated output.
+ *
+ * @param aiClient An instance of the AI client to use for LLM interactions.
+ * @param itemList The list of items to deduplicate semantically.
+ * @param explanation Optional explanation that provides domain context to help
+ * the model decide which items are semantically equivalent.
+ *
+ * @returns A deduplicated list containing one representative item per semantic
+ * group.
+ */
+export const removeSemanticDuplicates = async (
+  aiClient: any,
+  itemList: SemanticItem[],
+  explanation?: string
+): Promise<SemanticItem[]> => {
+  const groups = await getSemanticallyDistinctGroups(
+    aiClient,
+    itemList,
+    explanation
+  );
+  const retval = groups.map((group) => group[0]);
+  return retval;
+};
