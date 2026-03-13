@@ -2,6 +2,17 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.3.0] - 2026-03-12
+
+### Added
+
+- Added `get_semantically_distinct_groups` and `remove_semantic_duplicates` for semantic deduplication workflows.
+- Added dedicated live API tests for `get_semantically_distinct_groups` and `remove_semantic_duplicates`.
+
+### Changed
+
+- Exported `get_semantically_distinct_groups` and `remove_semantic_duplicates` from the package entrypoint.
+
 ## [1.2.0] - 2026-03-09
 
 ### Changed
